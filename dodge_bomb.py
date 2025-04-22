@@ -87,9 +87,6 @@ def main():
     
     vx, vy = +5, +5
 
-    #時間によって爆弾が拡大、加速
-    bb_accs = [a for a in range(1, 11)]
-
     clock = pg.time.Clock()
     tmr = 0
     while True:
@@ -143,9 +140,9 @@ def main():
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1]) #画面内に戻す
         screen.blit(kk_img, kk_rct)
 
-        a_vx = vx*bb_accs[min(tmr//100, 9)]
-        a_vy = vy*bb_accs[min(tmr//100, 9)]
-        bb_img = bb_imgs[min(tmr//100, 9)]
+        a_vx = vx*bb_accs[min(tmr//500, 9)]
+        a_vy = vy*bb_accs[min(tmr//500, 9)]
+        bb_img = bb_imgs[min(tmr//500, 9)]
         bb_rct.width = bb_img.get_width()
         bb_rct.height = bb_img.get_height()
         
