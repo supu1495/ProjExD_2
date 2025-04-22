@@ -97,7 +97,6 @@ def main():
 
 
         if kk_rct.colliderect(bb_rct):
-            print("Game Over")
             go_img = pg.Surface((1600,900))
             pg.draw.rect(go_img, (0, 0, 0), (0,0, 1600,900))
             go_img.set_alpha(90) #透明化
