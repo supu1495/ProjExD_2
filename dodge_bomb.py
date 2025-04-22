@@ -1,6 +1,7 @@
 import os
 import random
 import sys
+import time
 import pygame as pg
 
 
@@ -28,6 +29,14 @@ def check_bound(rct: pg.Rect) -> tuple[bool, bool]:
         tate = False
     return side, tate
 
+def gameover(screen: pg.Surface) -> None:
+    if kk_rct.colliderect(bb_rct):
+        gameover(screen)
+
+def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
+    bb_imgs, bb_accs = init_bb_imgs()
+    avx = vx*bb_accs[min(tmr//500, 9)]
+    bb_img = bb_imgs[min(tmr//500, 9)]
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -52,10 +61,20 @@ def main():
                 return
         screen.blit(bg_img, [0, 0])
 
+
         if kk_rct.colliderect(bb_rct):
             print("Game Over")
-            return
-        
+            go_img = pg.Surface((1600,900))
+            pg.draw.rect(go_img, (0, 0, 0), (0,0, 1600,900))
+            go_img.set_alpha(90)
+            screen.blit(go_img,[0, 0])
+            fonto = pg.font.Font(None, 80)
+            txt = fonto.render("Game Over", True, (255, 0, 0))
+            screen.blit(txt, [300,200])
+            pg.display.update()
+            time.sleep(5)
+            return           
+            
         key_lst = pg.key.get_pressed()
         sum_mv = [0, 0]
         for key, mv in DELTA.items(): #DELTAの中身が4つ分for文で回ってる
