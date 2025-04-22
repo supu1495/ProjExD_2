@@ -28,15 +28,46 @@ def check_bound(rct: pg.Rect) -> tuple[bool, bool]:
     if rct.top < 0 or HEIGHT < rct.bottom:
         tate = False
     return side, tate
-
+#演習1
 def gameover(screen: pg.Surface) -> None:
     if kk_rct.colliderect(bb_rct):
         gameover(screen)
 
+#演習2
 def init_bb_imgs() -> tuple[list[pg.Surface], list[int]]:
-    bb_imgs, bb_accs = init_bb_imgs()
-    avx = vx*bb_accs[min(tmr//500, 9)]
-    bb_img = bb_imgs[min(tmr//500, 9)]
+    
+    #加速度のリスト策系
+    # bb_accs = [a for a in range(1,11)]
+    
+    bb_accs = []
+    for a in range(1,11):
+        bb_accs.append(a)
+
+    # bb_accs は[1,2,3,4,5,6,7,8,9,10]
+
+    #拡大爆弾Surfaceのリスト
+    bb_imgs = []
+    for r in range(1,11):
+        bb_img = pg.Surface((20*r, 20*r))
+        pg.draw.circle(bb_img,(255, 0, 0), (10*r, 10*r), 10*r)
+        bb_img.set_colorkey((0, 0, 0))
+        bb_imgs.append(bb_img)
+
+    # イメージ
+    # bb_imgs = [bb_img1, bb_img2, bb_img3, bb_img4.....]
+    # bb_accs = [speed1, speed2, speed3, speed4,,,,,,,,]
+
+    return  bb_imgs, bb_accs
+
+
+# def return_num():
+#     num = 1
+#     return num
+
+# ret_num =  return_num()
+
+# lst = [1,2,3,4,5,6,7]
+# print(lst[0])
 
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
@@ -46,12 +77,18 @@ def main():
     kk_rct = kk_img.get_rect()
     kk_rct.center = 300, 200
     #爆弾の初期化
-    bb_img = pg.Surface((20,20))
-    pg.draw.circle(bb_img, (255, 0, 0), (10, 10), 10)
-    bb_img.set_colorkey((0, 0, 0))
+    bb_imgs, bb_accs = init_bb_imgs()
+
+    bb_img = bb_imgs[0]
+    # pg.draw.circle(bb_img, (255, 0, 0), (10, 10), 10)
+    # bb_img.set_colorkey((0, 0, 0))
     bb_rct = bb_img.get_rect()
-    bb_rct.center = random.randint(0, WIDTH), random.randint(0, HEIGHT)
+    # bb_rct.center = random.randint(0, WIDTH), random.randint(0, HEIGHT)
+    
     vx, vy = +5, +5
+
+    #時間によって爆弾が拡大、加速
+    bb_accs = [a for a in range(1, 11)]
 
     clock = pg.time.Clock()
     tmr = 0
@@ -66,7 +103,7 @@ def main():
             print("Game Over")
             go_img = pg.Surface((1600,900))
             pg.draw.rect(go_img, (0, 0, 0), (0,0, 1600,900))
-            go_img.set_alpha(90)
+            go_img.set_alpha(90) #透明化
             screen.blit(go_img,[0, 0])
             fonto = pg.font.Font(None, 80)
             txt = fonto.render("Game Over", True, (255, 0, 0))
@@ -89,11 +126,33 @@ def main():
         #     sum_mv[0] -= 5
         # if key_lst[pg.K_RIGHT]:
         #     sum_mv[0] += 5
+
+       
+        # main
+        
+
+        # イメージ
+        # bb_imgs = [bb_img1, bb_img2, bb_img3, bb_img4]
+        # bb_accs = [speed1, speed2, speed3, speed4]
+
+        # avx = vx*bb_accs[min(tmr//500, 9)]
+        # bb_img = bb_imgs[min(tmr//500, 9)]
+        
         kk_rct.move_ip(sum_mv)
         if check_bound(kk_rct) != (True, True): #画面外だったら
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1]) #画面内に戻す
         screen.blit(kk_img, kk_rct)
-        bb_rct.move_ip(vx, vy)
+
+        a_vx = vx*bb_accs[min(tmr//100, 9)]
+        a_vy = vy*bb_accs[min(tmr//100, 9)]
+        bb_img = bb_imgs[min(tmr//100, 9)]
+        bb_rct.width = bb_img.get_width()
+        bb_rct.height = bb_img.get_height()
+
+        
+        
+        bb_img.set_colorkey((0, 0, 0))
+        bb_rct.move_ip(a_vx, a_vy)
         screen.blit(bb_img, bb_rct)
         side, tate = check_bound(bb_rct)
         if not side:
